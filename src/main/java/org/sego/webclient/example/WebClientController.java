@@ -1,12 +1,8 @@
 package org.sego.webclient.example;
 
 import java.time.Duration;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutionException;
 import java.util.function.Supplier;
 
-import org.reactivestreams.Publisher;
-import org.reactivestreams.Subscriber;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -22,7 +18,9 @@ public class WebClientController {
 	@Autowired
 	protected WebClient webClient;
 
-	// Don't works. Freeze
+	///
+	// Don't works. Freeze application
+	///
 	@GetMapping(path = "/people1/{id}")
 	public String getPeopleBlock(@PathVariable Long id) {
 		System.out.println("People block request: " + id);
@@ -60,7 +58,6 @@ public class WebClientController {
 		return Mono.fromSupplier(new Supplier<String>() {
 			@Override
 			public String get() {
-				// TODO Auto-generated method stub
 				return "Hello";
 			}
 		}).delayElement(Duration.ofSeconds(2));
