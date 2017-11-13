@@ -3,6 +3,8 @@ package org.sego.webclient.example;
 import java.time.Duration;
 import java.util.function.Supplier;
 
+import javax.annotation.PostConstruct;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -17,11 +19,20 @@ public class WebClientController {
 
 	@Autowired
 	protected WebClient webClient;
+	
+	// Works
+	@PostConstruct
+	public void foo() {
+		System.out.println(getPeopleRsp(2l).block());
+		System.out.println(getPeopleRsp(3l).block());
+		System.out.println(getPeopleRsp(4l).block());
+		System.out.println(getPeopleRsp(5l).block());
+	}
 
 	///
-	// Don't works. Freeze application
+	// Don't works (>1 time). Freeze application
 	///
-	@GetMapping(path = "/people1/{id}")
+	@GetMapping(path = "/people1/{id}", produces = "application/json;charset=UTF-8")
 	public String getPeopleBlock(@PathVariable Long id) {
 		System.out.println("People block request: " + id);
 		return getPeopleRsp(id).block();
@@ -49,7 +60,7 @@ public class WebClientController {
 	}
 
 	private Mono<String> getPeopleRsp(Long id) {
-		String url = "https://swapi.co/api/people/" + id + "?format=json";
+		String url = "https://swapi.co/api/people/" + id + "/?format=json";
 		return webClient.get().uri(url).accept(MediaType.APPLICATION_JSON_UTF8).header("User-Agent", "Chrome")
 				.exchange().log().flatMap(r -> r.bodyToMono(String.class));
 	}
